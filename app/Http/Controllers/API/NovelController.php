@@ -28,7 +28,8 @@ class NovelController extends Controller
             Novel::create([
                 "title" => $request->title,
                 "description" => $request->description,
-                "price" => $request->price
+                "price" => $request->price,
+                "status" => $request->status
             ]);
 
             return response()->json([
@@ -55,8 +56,52 @@ class NovelController extends Controller
             $data = $data->whereBetween('price', [$from, $to]);
         }
 
+        if (!empty($request->status) && in_array($request->status, [0, 1])) {
+            $data = $data->where('status', $request->status);
+        }
+
+        if (!empty($request->fromDate) && !empty($request->toDate)) {
+            $fromDate = $request->fromDate . ' 00:00:01';
+            $toDate = $request->toDate. ' 23:59:00';
+
+            $data = $data->whereBetween('created_at', [$fromDate, $toDate]);
+        }
+
         $data = $data->orderBy('created_at', 'DESC')->paginate($request->perPage);
 
         return response()->json(["content" => $data, "status" => 200], 200);
+    }
+
+    public function edit($id)
+    {
+        $novel = Novel::find($id);
+
+        return response()->json($novel);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $novel = Novel::find($id);
+
+        $novel->update([
+            "title" => $request->title,
+            "description" => $request->description,
+            "price" => $request->price,
+            "status" => $request->status
+        ]);
+
+        return response()->json([
+            "status" => 200,
+            "message" => "data berhasil diubah"
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $novel = Novel::find($id);
+
+        $novel->delete();
+
+        return response()->json("data berhasil dihapus");
     }
 }

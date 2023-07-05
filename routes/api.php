@@ -22,3 +22,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/novel/store', [NovelController::class, 'store'])->name('novel.store');
 Route::get('/novel', [NovelController::class, 'index'])->name('novel.index');
+Route::get('/novel/edit/{id}', [NovelController::class, 'edit'])->name('novel.edit');
+Route::put('/novel/update/{id}', [NovelController::class, 'update'])->name('novel.update');
+Route::delete('/novel/{id}', [NovelController::class, 'destroy'])->name('novel.delete');
